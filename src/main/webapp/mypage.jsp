@@ -14,6 +14,11 @@
             list-style: none;
             margin: 0 auto;
         }
+        h1 {
+            color: #606060;
+            text-align: center;
+            font-family: monospace;
+        }
         a {
             text-decoration: none;
             font-family: 'Lora', serif;
@@ -24,7 +29,7 @@
         }
         nav {
             display: block;
-            width: 660px;
+            width: 100%;
             margin: 0 auto 30px;
         }
         .menu ul {
@@ -91,14 +96,14 @@
             .one h1 {font-size: 2em;}
         }
         .three {
-            background: #FCF2E5;
+            background: #FFF4ED;
             padding: 30px 10px;
             text-align: center;
         }
         .three h1 {
             font-family: 'Merriweather', serif;
             position: relative;
-            color: #FCF2E5;
+            color: #FFF4ED;
             background: #90806A;
             font-size: 2.5em;
             font-weight: normal;
@@ -178,20 +183,36 @@
 
             var data = google.visualization.arrayToDataTable([
                 ['Task', 'Hours per Day'],
-                ['Work',     11],
-                ['Eat',      2],
-                ['Commute',  2],
-                ['Watch TV', 2],
-                ['Sleep',    7]
+                ['00:00 - 4:00',     1],
+                ['4:00 - 8:00',      5],
+                ['8:00 - 12:00',  23],
+                ['12:00 - 16:00', 56],
+                ['16:00 - 20:00',    20],
+                ['20:00 - 24:00',    3]
             ]);
 
             var options = {
-                title: 'My Daily Activities'
+                title: 'Статистика продаж по часам'
             };
 
             var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
             chart.draw(data, options);
+        }
+    </script>
+
+    <script>
+        function show_element(div_name) {
+            console.log(div_name);
+            var current = document.getElementById(div_name);
+            current.style.display = "block";
+
+            var elements = document.getElementsByClassName("menu_div");
+            for(var i=0; i< elements.length; i++) {
+                if (elements[i].id != div_name){
+                    elements[i].style.display = "none";
+                }
+            }
         }
     </script>
 
@@ -205,83 +226,183 @@
         <h1>Панель администратора</h1>
     </div>
 
-    <div class="form">
-        <form action="mypage.jsp">
-            <label for="max_discount">Максимальный размер скидки</label>
-            <input type="text" id="max_discount" name="max_discount" placeholder="Скидка в %">
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
-
     <nav class="menu">
         <ul>
-            <li><a href="#"><i class="fa fa-home fa-fw"></i>В начало</a></li>
-            <li><a href="#">Работа</a></li>
-            <li><a href="#">О нас</a></li>
-            <li><a href="#">Блог</a></li>
-            <li><a href="#">Контакты</a></li>
+            <li><a href="#" onclick="show_element('start')">В начало</a></li>
+            <li><a href="#" onclick="show_element('buyers')">Покупатели</a></li>
+            <li><a href="#" onclick="show_element('products')">Продукты</a></li>
+            <li><a href="#" onclick="show_element('sales')">Список продаж</a></li>
+            <li><a href="#" onclick="show_element('sales_stat')">Статистика продаж</a></li>
+            <li><a href="#" onclick="show_element('setting_discount')">Настроить скидки</a></li>
+            <li><a href="#" onclick="show_element('info')">Информация о подсистеме</a></li>
+            <li><a href="#" onclick="show_element('help')">Помощь</a></li>
+            <li><a href="#" onclick="show_element('author')">Автор</a></li>
         </ul>
     </nav>
 
-    <table>
-    <tr>
-        <td>
+    <div class="menu_div" id="start" style="display: block;">
+        <h1>Главная</h1>
+        <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
+            <tr>
+                <td>
 
-            <h2 style="text-align: center;">Список покупателей</h2>
-            <table>
-                <tr>
-                    <th>Имя покупателя</th>
-                    <th>Сумма покупок (BYN)</th>
-                    <th>Размер скидки (%)</th>
-                </tr>
-            <%
-                Class.forName("com.mysql.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/course_work", "java_user", "Password_123");
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("select users.id, concat(users.fname, ' ', users.lname, ' ', users.mname) as name, sum(price) as sum, sum(price) * 0.001 as discount from users join sales on sales.user_id = users.id join products on products.id = sales.product_id group by users.id order by sum(price) desc;");
-                while (rs.next()){
-            %>
-                <tr>
-                    <th><%= rs.getString("name") %></th>
-                    <th><%= rs.getString("sum") %></th>
-                    <th><%= rs.getString("discount") %></th>
-                </tr>
-            <%
-                }
-            %>
-            </table>
+                    <h2 style="text-align: center;">Список покупателей</h2>
+                    <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
+                        <tr>
+                            <th>Имя покупателя</th>
+                            <th>Сумма покупок (BYN)</th>
+                            <th>Размер скидки (%)</th>
+                        </tr>
+                        <%--            <%--%>
+                        <%--                Class.forName("com.mysql.jdbc.Driver");--%>
+                        <%--                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/course_work", "java_user", "Password_123");--%>
+                        <%--                Statement st = con.createStatement();--%>
+                        <%--                ResultSet rs = st.executeQuery("select users.id, concat(users.fname, ' ', users.lname, ' ', users.mname) as name, sum(price) as sum, sum(price) * 0.001 as discount from users join sales on sales.user_id = users.id join products on products.id = sales.product_id group by users.id order by sum(price) desc;");--%>
+                        <%--                while (rs.next()){--%>
+                        <%--            %>--%>
+                        <%--                <tr>--%>
+                        <%--                    <th><%= rs.getString("name") %></th>--%>
+                        <%--                    <th><%= rs.getString("sum") %></th>--%>
+                        <%--                    <th><%= rs.getString("discount") %></th>--%>
+                        <%--                </tr>--%>
+                        <%--            <%--%>
+                        <%--                }--%>
+                        <%--            %>--%>
+                    </table>
 
-        </td>
+                </td>
 
-        <td style="vertical-align: top; width: 50%;">
-            <h2 style="text-align: center;">Все товары</h2>
-            <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
-                <tr>
-                    <th>№ п/п</th>
-                    <th>Наименование продукта</th>
-                    <th>Сумма продаж (BYN)</th>
-                    <th>Cкидка продукта (%)</th>
-                </tr>
-                <%
-                    ResultSet rs2 = st.executeQuery("select products.id as id, name, sum(price) as sum, sum(price) * 0.001 as discount from products join sales on sales.product_id = products.id join users on users.id = sales.user_id group by products.id order by sum(price) desc;");
-                    while (rs2.next()){
-                %>
-                    <tr>
-                        <th><%=rs2.getInt("id") %></th>
-                        <th><%=rs2.getString("name") %></th>
-                        <th><%=rs2.getInt("sum") %></th>
-                        <th><%=rs2.getString("discount") %></th>
-                    </tr>
-                <%
-                    }
-                %>
-            </table>
-        </td>
-    </tr>
-</table>
+                <td style="vertical-align: top; width: 50%;">
+                    <h2 style="text-align: center;">Все товары</h2>
+                    <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
+                        <tr>
+                            <th>№ п/п</th>
+                            <th>Наименование продукта</th>
+                            <th>Сумма продаж (BYN)</th>
+                            <th>Cкидка продукта (%)</th>
+                        </tr>
+                        <%--                <%--%>
+                        <%--                    ResultSet rs2 = st.executeQuery("select products.id as id, name, sum(price) as sum, sum(price) * 0.001 as discount from products join sales on sales.product_id = products.id join users on users.id = sales.user_id group by products.id order by sum(price) desc;");--%>
+                        <%--                    while (rs2.next()){--%>
+                        <%--                %>--%>
+                        <%--                    <tr>--%>
+                        <%--                        <th><%=rs2.getInt("id") %></th>--%>
+                        <%--                        <th><%=rs2.getString("name") %></th>--%>
+                        <%--                        <th><%=rs2.getInt("sum") %></th>--%>
+                        <%--                        <th><%=rs2.getString("discount") %></th>--%>
+                        <%--                    </tr>--%>
+                        <%--                <%--%>
+                        <%--                    }--%>
+                        <%--                %>--%>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
 
+    <div class="menu_div" id="buyers" style="display: none;">
+        <h1>Все покупатели</h1>
+        <h2 style="text-align: center;">Список покупателей</h2>
+        <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
+            <tr>
+                <th>Имя покупателя</th>
+                <th>Сумма покупок (BYN)</th>
+                <th>Размер скидки (%)</th>
+            </tr>
+            <%--            <%--%>
+            <%--                Class.forName("com.mysql.jdbc.Driver");--%>
+            <%--                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/course_work", "java_user", "Password_123");--%>
+            <%--                Statement st = con.createStatement();--%>
+            <%--                ResultSet rs = st.executeQuery("select users.id, concat(users.fname, ' ', users.lname, ' ', users.mname) as name, sum(price) as sum, sum(price) * 0.001 as discount from users join sales on sales.user_id = users.id join products on products.id = sales.product_id group by users.id order by sum(price) desc;");--%>
+            <%--                while (rs.next()){--%>
+            <%--            %>--%>
+            <%--                <tr>--%>
+            <%--                    <th><%= rs.getString("name") %></th>--%>
+            <%--                    <th><%= rs.getString("sum") %></th>--%>
+            <%--                    <th><%= rs.getString("discount") %></th>--%>
+            <%--                </tr>--%>
+            <%--            <%--%>
+            <%--                }--%>
+            <%--            %>--%>
+        </table>
+    </div>
 
+    <div class="menu_div" id="products" style="display: none;">
+        <h2 style="text-align: center;">Все товары</h2>
+        <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
+            <tr>
+                <th>№ п/п</th>
+                <th>Наименование продукта</th>
+                <th>Сумма продаж (BYN)</th>
+                <th>Cкидка продукта (%)</th>
+            </tr>
+            <%--                <%--%>
+            <%--                    ResultSet rs2 = st.executeQuery("select products.id as id, name, sum(price) as sum, sum(price) * 0.001 as discount from products join sales on sales.product_id = products.id join users on users.id = sales.user_id group by products.id order by sum(price) desc;");--%>
+            <%--                    while (rs2.next()){--%>
+            <%--                %>--%>
+            <%--                    <tr>--%>
+            <%--                        <th><%=rs2.getInt("id") %></th>--%>
+            <%--                        <th><%=rs2.getString("name") %></th>--%>
+            <%--                        <th><%=rs2.getInt("sum") %></th>--%>
+            <%--                        <th><%=rs2.getString("discount") %></th>--%>
+            <%--                    </tr>--%>
+            <%--                <%--%>
+            <%--                    }--%>
+            <%--                %>--%>
+        </table>
+    </div>
+
+    <div class="menu_div" id="sales" style="display: none;">
+        <h1>Все продажи</h1>
+        <table style="border:1px solid blue; vertical-align: top; top:1px; right:0px; width: 100%;">
+            <tr>
+                <th>№ п/п</th>
+                <th>Наименование продукта</th>
+                <th>Сумма продаж (BYN)</th>
+                <th>Cкидка продукта (%)</th>
+            </tr>
+            <%--                <%--%>
+            <%--                    ResultSet rs2 = st.executeQuery("select products.id as id, name, sum(price) as sum, sum(price) * 0.001 as discount from products join sales on sales.product_id = products.id join users on users.id = sales.user_id group by products.id order by sum(price) desc;");--%>
+            <%--                    while (rs2.next()){--%>
+            <%--                %>--%>
+            <%--                    <tr>--%>
+            <%--                        <th><%=rs2.getInt("id") %></th>--%>
+            <%--                        <th><%=rs2.getString("name") %></th>--%>
+            <%--                        <th><%=rs2.getInt("sum") %></th>--%>
+            <%--                        <th><%=rs2.getString("discount") %></th>--%>
+            <%--                    </tr>--%>
+            <%--                <%--%>
+            <%--                    }--%>
+            <%--                %>--%>
+        </table>
+    </div>
+
+    <div class="menu_div" id="sales_stat" style="display: none;">
+        <h1>Статистика продаж по часам</h1>
+        <div id="piechart" style="width: 900px; height: 500px;"></div>
+    </div>
+
+    <div class="menu_div" id="setting_discount" style="display: none;">
+        <div class="form">
+            <form action="mypage.jsp">
+                <label for="max_discount">Установить максимальный размер скидки</label>
+                <input type="text" id="max_discount" name="max_discount" placeholder="Скидка в %">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
+    <div class="menu_div" id="info" style="display: none;">
+        <h1>Информация</h1>
+    </div>
+
+    <div class="menu_div" id="help" style="display: none;">
+        <h1>Помощь</h1>
+    </div>
+
+    <div class="menu_div" id="author" style="display: none;">
+        <h2>Автор: Нехведович Евгений</h2>
+        <h2>группа: 710101</h2>
+    </div>
 </body>
 </html>
